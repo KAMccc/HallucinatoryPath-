@@ -17,9 +17,30 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 5feddf0396f8fd842b6a2034a343e884, type: 3}
   - {fileID: 21300000, guid: 274864b118ac4f54589e32e7035cd77f, type: 3}
   - {fileID: 21300000, guid: 81cb795749aefac4ea7663bc3f7f71fb, type: 3}
+  platformThemeSpriteLis:
+  - {fileID: 21300002, guid: 20da7e56cbb26b3498b25fb61fa9a7ff, type: 3}
+  - {fileID: 21300012, guid: 20da7e56cbb26b3498b25fb61fa9a7ff, type: 3}
+  - {fileID: 21300004, guid: 20da7e56cbb26b3498b25fb61fa9a7ff, type: 3}
+  - {fileID: 21300000, guid: 20da7e56cbb26b3498b25fb61fa9a7ff, type: 3}
   characterPre: {fileID: 5230092520792595691, guid: 08bf0dd5678581e4885c9fa233a86fb5,
     type: 3}
   normalPlatformPre: {fileID: 237611050021798862, guid: 33f3f48bb4008e74e80b11ce4325644c,
+    type: 3}
+  commonPlatformGroup:
+  - {fileID: 8846292836836645327, guid: 551894aa8e6db954d9d1a2460c4663a1, type: 3}
+  - {fileID: 9220499112282544838, guid: c189bf032d962d74390eedda2ec798c3, type: 3}
+  - {fileID: 4610087202063023718, guid: 64af7724341d8894691f8cd4b71966b5, type: 3}
+  - {fileID: 838496176990789982, guid: 8370dbbe6b229364283e0bf48e3a4623, type: 3}
+  grassPlatformGroup:
+  - {fileID: 84023697449618420, guid: f720da29adec8b94dbc00a1fd3798090, type: 3}
+  - {fileID: 8186391428795642711, guid: 0f1ab62c01fa68f4280190d7697cc720, type: 3}
+  winterPlatformGroup:
+  - {fileID: 3371586398882273340, guid: 4173f17c88f4b0f439c7bd6a71c09a43, type: 3}
+  - {fileID: 5837008353726649668, guid: 50b7f4876845e544dae423ae6df312ac, type: 3}
+  - {fileID: 3836104523393753375, guid: fa6307f7d6401cc41af77ce568c48a42, type: 3}
+  spikePlatformLeft: {fileID: 6019836951646021154, guid: 9eb0a413d574a19499175a347b3d7c08,
+    type: 3}
+  spikePlatformRight: {fileID: 3340378032612657484, guid: 420e1fe8b925b304ca917cc29a4037a6,
     type: 3}
   nextXPos: 0.554
   nextYPos: 0.645

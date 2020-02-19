@@ -35,6 +35,7 @@ public class MainPanel : MonoBehaviour
     /// </summary>
     private void OnStartButtonClick()
     {
+        GameManager.Instance.IsGameStarted = true;
         EventCenter.Broadcast(EventDefine.ShopGamePanel);
         gameObject.SetActive(false);
     }
