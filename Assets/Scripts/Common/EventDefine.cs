@@ -2,4 +2,12 @@
 {
     ShopGamePanel,
     DecidePath,
+    AddScore,
+    UpdateScoreText,
+    PlayerMove,
+    AddDiamond,
+    UpdateDiamondText,
+    ShopGameOverPanel,
+    ShowShopPanel,
+    ShowMainPanel,
 }

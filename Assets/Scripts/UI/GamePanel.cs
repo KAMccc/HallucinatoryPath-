@@ -13,12 +13,13 @@ public class GamePanel : MonoBehaviour
 
     private void Awake()
     {
-        EventCenter.AddListener(EventDefine.ShopGamePanel, Shop);
-
+        EventCenter.AddListener(EventDefine.ShopGamePanel, Show);
+        EventCenter.AddListener<int>(EventDefine.UpdateScoreText, UpdateScoreText);
+        EventCenter.AddListener<int>(EventDefine.UpdateDiamondText, UpdateDiamondText);
         Init();
-
-
     }
+
+
 
     private void Init()
     {
@@ -35,14 +36,35 @@ public class GamePanel : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void Shop()
+    private void Show()
     {
         gameObject.SetActive(true);
     }
 
+    /// <summary>
+    /// 更新成绩显示
+    /// </summary>
+    /// <param name="score"></param>
+    private void UpdateScoreText(int score)
+    {
+        txt_Score.text = score.ToString();
+    }
+
+    /// <summary>
+    /// 更新钻石数量显示
+    /// </summary>
+    /// <param name="diamond"></param>
+    private void UpdateDiamondText(int diamond)
+    {
+        txt_DiamondCount.text = diamond.ToString();
+    }
+
     private void OnDestroy()
     {
-        EventCenter.RemoveListener(EventDefine.ShopGamePanel, Shop);
+        EventCenter.RemoveListener(EventDefine.ShopGamePanel, Show);
+        EventCenter.RemoveListener<int>(EventDefine.UpdateScoreText, UpdateScoreText);
+        EventCenter.RemoveListener<int>(EventDefine.UpdateDiamondText, UpdateDiamondText);
+
     }
 
 
@@ -55,6 +77,8 @@ public class GamePanel : MonoBehaviour
         btn_Pause.gameObject.SetActive(false);
 
         // Todo 游戏暂停
+        Time.timeScale = 0;
+        GameManager.Instance.IsPause = true;
     }    
     
     /// <summary>
@@ -66,7 +90,10 @@ public class GamePanel : MonoBehaviour
         btn_Pause.gameObject.SetActive(true);
 
         //Todo 继续游戏
+        Time.timeScale = 1;
+        GameManager.Instance.IsPause = false;
+
     }
 
-    
+
 }

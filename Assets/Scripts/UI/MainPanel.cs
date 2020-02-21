@@ -13,6 +13,23 @@ public class MainPanel : MonoBehaviour
     private void Awake()
     {
         Init();
+        EventCenter.AddListener(EventDefine.ShowMainPanel, ShowMainPanel);
+    }
+
+    private void Start()
+    {
+        //在Awake的时候广播，注册的还没有加载好，时序问题。需要在start的时候广播
+        if (GameData.IsAgainGame)
+        {
+            EventCenter.Broadcast(EventDefine.ShopGamePanel);
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        EventCenter.RemoveListener(EventDefine.ShowMainPanel, ShowMainPanel);
+
     }
 
     private void Init()
@@ -44,7 +61,8 @@ public class MainPanel : MonoBehaviour
     /// </summary>
     private void OnShopButtonClick()
     {
-
+        EventCenter.Broadcast(EventDefine.ShowShopPanel);
+        gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -61,5 +79,10 @@ public class MainPanel : MonoBehaviour
     private void OnSoundButtonClick()
     {
 
+    }
+
+    private void ShowMainPanel()
+    {
+        gameObject.SetActive(true);
     }
 }

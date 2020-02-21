@@ -12,6 +12,19 @@ public class PlatformSpawner : MonoBehaviour
 {
     //平台初始生成位置
     public Vector3 startSpawnPos;
+    //平台掉落里程碑数
+    [Header("平台掉落里程碑数")]
+    public int milestoneCount = 10;
+    [Header("平台初始掉落时间")]
+    public float fallTime = 2f;
+    [Header("平台最小掉落时间")]
+    public float minFallTime = 0.1f;
+    [Header("掉落时间系数")]
+    [Tooltip("掉落时间 = 初始时间 * 系数  》= 最小时间")]
+    public float multiple = 2;
+    [Header("生成钻石概率（0-10）")]
+    public int diamondProbability = 2;
+
     //生成平台数量
     private int spawnPlatformCount;
     private ManagerVars vars;
@@ -60,6 +73,29 @@ public class PlatformSpawner : MonoBehaviour
         //生成人物
         GameObject go =Instantiate(vars.characterPre);
         go.transform.position = new Vector3(0, -1.8f, 0);
+    }
+    private void Update()
+    {
+        if(GameManager.Instance.IsGameStarted && !GameManager.Instance.IsGameOver && !GameManager.Instance.IsPause)
+        {
+            UpdateFallTime();
+        }
+    }
+
+    /// <summary>
+    /// 更新平台掉落时间
+    /// </summary>
+    private void UpdateFallTime()
+    {
+        if(GameManager.Instance.GetGameScore() > milestoneCount)
+        {
+            milestoneCount *= 2;
+            fallTime *= multiple;
+            if(fallTime < minFallTime)
+            {
+                fallTime = minFallTime;
+            }
+        }
     }
 
     /// <summary>
@@ -172,6 +208,13 @@ public class PlatformSpawner : MonoBehaviour
             }
         }
 
+        int ranSpawnDiamond = Random.Range(0, 10);
+        if(ranSpawnDiamond <= diamondProbability && GameManager.Instance.PlayerIsMove)
+        {
+            GameObject go = ObjectPool.Instance.GetDiamond();
+            go.transform.position = new Vector3(platformSpawnPosition.x, platformSpawnPosition.y + 0.5f, 0);
+            go.SetActive(true);
+        }
 
         if (isLeftSpawn)//向左生成
         {
@@ -192,7 +235,7 @@ public class PlatformSpawner : MonoBehaviour
         GameObject go = ObjectPool.Instance.GetNormalPlatform();
         go.transform.position = platformSpawnPosition;
         //给PlatformScript传图
-        go.GetComponent<PlatformScript>().Init(selectPlatformSprite, ranObstacleDir);
+        go.GetComponent<PlatformScript>().Init(selectPlatformSprite, fallTime, ranObstacleDir);
         go.SetActive(true);
     }
 
@@ -203,7 +246,7 @@ public class PlatformSpawner : MonoBehaviour
     {
         GameObject go = ObjectPool.Instance.GetCommonPlatformGroup();
         go.transform.position = platformSpawnPosition;
-        go.GetComponent<PlatformScript>().Init(selectPlatformSprite, ranObstacleDir);
+        go.GetComponent<PlatformScript>().Init(selectPlatformSprite, fallTime,ranObstacleDir);
         go.SetActive(true);
     }
 
@@ -214,7 +257,7 @@ public class PlatformSpawner : MonoBehaviour
     {
         GameObject go = ObjectPool.Instance.GetGrassPlatformGroup();
         go.transform.position = platformSpawnPosition;
-        go.GetComponent<PlatformScript>().Init(selectPlatformSprite, ranObstacleDir);
+        go.GetComponent<PlatformScript>().Init(selectPlatformSprite, fallTime, ranObstacleDir);
         go.SetActive(true);
     }
 
@@ -225,7 +268,7 @@ public class PlatformSpawner : MonoBehaviour
     {
         GameObject go = ObjectPool.Instance.GetWinterPlatformGroup();
         go.transform.position = platformSpawnPosition;
-        go.GetComponent<PlatformScript>().Init(selectPlatformSprite, ranObstacleDir);
+        go.GetComponent<PlatformScript>().Init(selectPlatformSprite, fallTime, ranObstacleDir);
         go.SetActive(true);
     }
 
@@ -247,7 +290,7 @@ public class PlatformSpawner : MonoBehaviour
             temp = ObjectPool.Instance.GetLeftSpikePlatform();
         }
         temp.transform.position = platformSpawnPosition;
-        temp.GetComponent<PlatformScript>().Init(selectPlatformSprite, dir);
+        temp.GetComponent<PlatformScript>().Init(selectPlatformSprite, fallTime, dir);
         temp.SetActive(true);
     }
 
@@ -294,7 +337,7 @@ public class PlatformSpawner : MonoBehaviour
                     }
                 }
 
-                temp.GetComponent<PlatformScript>().Init(selectPlatformSprite,1);
+                temp.GetComponent<PlatformScript>().Init(selectPlatformSprite, fallTime, 1);
                 temp.SetActive(true);
             }
         }
