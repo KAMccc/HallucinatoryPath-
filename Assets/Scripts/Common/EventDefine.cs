@@ -10,4 +10,6 @@
     ShopGameOverPanel,
     ShowShopPanel,
     ShowMainPanel,
+    ChangeSkin,
+    Hint,
 }

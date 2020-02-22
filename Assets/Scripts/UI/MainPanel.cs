@@ -9,11 +9,16 @@ public class MainPanel : MonoBehaviour
     private Button btn_Shop;
     private Button btn_Rank;
     private Button btn_Sound;
+    private Button btn_Reset;
+
+    private ManagerVars vars;
 
     private void Awake()
     {
+        vars = ManagerVars.GetManagerVars();
         Init();
         EventCenter.AddListener(EventDefine.ShowMainPanel, ShowMainPanel);
+        EventCenter.AddListener<int>(EventDefine.ChangeSkin, ChangeSkin);
     }
 
     private void Start()
@@ -24,11 +29,14 @@ public class MainPanel : MonoBehaviour
             EventCenter.Broadcast(EventDefine.ShopGamePanel);
             gameObject.SetActive(false);
         }
+        //主界面设置当前皮肤图片
+        ChangeSkin(GameManager.Instance.GetCurrentSelectSkin());
     }
 
     private void OnDestroy()
     {
         EventCenter.RemoveListener(EventDefine.ShowMainPanel, ShowMainPanel);
+        EventCenter.RemoveListener<int>(EventDefine.ChangeSkin, ChangeSkin);
 
     }
 
@@ -45,6 +53,9 @@ public class MainPanel : MonoBehaviour
 
         btn_Sound = transform.Find("Btns/btn_Sound").GetComponent<Button>();
         btn_Sound.onClick.AddListener(OnSoundButtonClick);
+
+        btn_Reset = transform.Find("Btns/btn_Reset").GetComponent<Button>();
+        btn_Reset.onClick.AddListener(OnResetButtonClick);
     }
 
     /// <summary>
@@ -81,8 +92,26 @@ public class MainPanel : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// 重置点击
+    /// </summary>
+    private void OnResetButtonClick()
+    {
+
+    }
+
     private void ShowMainPanel()
     {
         gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// 刷新UI皮肤图片
+    /// </summary>
+    /// <param name="skinIndex"></param>
+    private void ChangeSkin(int skinIndex)
+    {
+        btn_Shop.transform.GetChild(0).GetComponent<Image>().sprite = vars.skinSpriteList[skinIndex];
+
     }
 }

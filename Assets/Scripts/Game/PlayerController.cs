@@ -32,6 +32,18 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         vars = ManagerVars.GetManagerVars();
         my_Body = GetComponent<Rigidbody2D>();
+
+        EventCenter.AddListener<int>(EventDefine.ChangeSkin, ChangeSkin);
+    }
+
+    private void Start()
+    {
+        ChangeSkin(GameManager.Instance.GetCurrentSelectSkin());
+    }
+
+    private void OnDestroy()
+    {
+        EventCenter.RemoveListener<int>(EventDefine.ChangeSkin, ChangeSkin);
     }
 
     private void Update()
@@ -45,8 +57,8 @@ public class PlayerController : MonoBehaviour
 
         if (GameManager.Instance.IsGameStarted == false || GameManager.Instance.IsGameOver || GameManager.Instance.IsPause)
             return;
-         
-        if (Input.GetMouseButtonDown(0) && isJumping == false)
+
+        if (Input.GetMouseButtonDown(0) && isJumping == false && nextPlatformLeft != Vector3.zero)
         {
             if (!isMove) 
             {
@@ -190,6 +202,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 更换皮肤
+    /// </summary>
+    /// <param name="skinIndex"></param>
+    private void ChangeSkin(int skinIndex)
+    {
+        spriteRenderer.sprite = vars.characterSkinSpriteList[skinIndex];
+    }
 
 
     private void OnTriggerEnter2D(Collider2D collision)

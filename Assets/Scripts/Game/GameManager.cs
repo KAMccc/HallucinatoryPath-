@@ -27,16 +27,19 @@ public class GameManager : MonoBehaviour
 
     private bool isFirstGame;
     private bool isMusicOn;
-
     private int[] bestScoreArr;
     private int selectSkin;
     private bool[] skinUnlocked;
     private int diamondCount;
 
+    private ManagerVars vars;
+
     private void Awake()
     {
         Instance = this;
-        data = new GameData();
+        //不需要New了，下面调用了初始化的方法
+        //data = new GameData();
+        vars = ManagerVars.GetManagerVars();
 
         EventCenter.AddListener(EventDefine.AddScore, AddGameScore);
         EventCenter.AddListener(EventDefine.PlayerMove,PlayerMove);
@@ -47,6 +50,8 @@ public class GameManager : MonoBehaviour
         {
             IsGameStarted = true;
         }
+
+        InitGameData();
     }
 
     private void OnDestroy()
@@ -106,6 +111,104 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 获取当前皮肤是否解锁
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public bool GetSkinUnlocked(int index)
+    {
+        return skinUnlocked[index];
+    }
+
+    /// <summary>
+    /// 设置解锁皮肤
+    /// </summary>
+    /// <param name="index"></param>
+    public void SetSkinUnlocked(int index)
+    {
+        skinUnlocked[index] = true;
+        Save();
+    }
+
+    /// <summary>
+    /// 设置当前选择皮肤
+    /// </summary>
+    /// <param name="index"></param>
+    public void SetSelectedSkin(int index) 
+    {
+        selectSkin = index;
+        Save();
+    }
+
+    /// <summary>
+    /// 获得当前选择的皮肤
+    /// </summary>
+    /// <returns></returns>
+    public int GetCurrentSelectSkin()
+    {
+        return selectSkin;
+    }
+
+    /// <summary>
+    /// 获取所有钻石数量
+    /// </summary>
+    /// <returns></returns>
+    public int GetAllDiamond()
+    {
+        return diamondCount;
+    }
+
+    /// <summary>
+    /// 更新总钻石数量
+    /// </summary>
+    /// <param name="value">新增用+，减少用-</param>
+    public void UpdateAllDiamond(int value)
+    {
+        diamondCount += value;
+        Save();
+    }
+
+    /// <summary>
+    /// 初始化游戏数据
+    /// </summary>
+    private void InitGameData()
+    {
+        Read();
+        if(data != null)
+        {
+            isFirstGame = data.GetIsFirstGame();
+
+        }
+        else
+        {
+            isFirstGame = true;
+        }
+
+        //如果第一次开始游戏
+        if (isFirstGame)
+        {
+            isFirstGame = false;
+            isMusicOn = true;
+            bestScoreArr = new int[3];
+            selectSkin = 0;
+            skinUnlocked = new bool[vars.skinSpriteList.Count];
+            skinUnlocked[0] = true;//第一个皮肤默认解锁
+            diamondCount = 10;
+
+            data = new GameData();
+            Save();
+        }
+        else
+        {
+            isMusicOn = data.GetisMusicOn();
+            bestScoreArr = data.GetBestScoreArr();
+            selectSkin = data.GetSelectSkin();
+            skinUnlocked = data.GetSkinUnlocked();
+            diamondCount = data.GetDiamondCount();
+        }
+    }
+
+    /// <summary>
     /// 储存数据
     /// </summary>
     private void Save()
@@ -140,7 +243,7 @@ public class GameManager : MonoBehaviour
             BinaryFormatter bf = new BinaryFormatter();
             using (FileStream fs = File.Open(Application.persistentDataPath + "/GameData.data",FileMode.Open))
             {
-                data = (GameData)bf.Deserialize(fs);
+                data =(GameData)bf.Deserialize(fs);
             }
         }
         catch (System.Exception e)
