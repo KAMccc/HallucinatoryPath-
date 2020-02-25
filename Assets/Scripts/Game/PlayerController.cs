@@ -26,24 +26,30 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     private bool isMove = false;
+    private AudioSource m_AudioSource;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         vars = ManagerVars.GetManagerVars();
         my_Body = GetComponent<Rigidbody2D>();
+        m_AudioSource = GetComponent<AudioSource>();
 
         EventCenter.AddListener<int>(EventDefine.ChangeSkin, ChangeSkin);
+        EventCenter.AddListener<bool>(EventDefine.IsMusicOn, IsMusicOn);
     }
 
     private void Start()
     {
         ChangeSkin(GameManager.Instance.GetCurrentSelectSkin());
+
     }
 
     private void OnDestroy()
     {
         EventCenter.RemoveListener<int>(EventDefine.ChangeSkin, ChangeSkin);
+        EventCenter.RemoveListener<bool>(EventDefine.IsMusicOn, IsMusicOn);
+
     }
 
     private void Update()
@@ -53,7 +59,19 @@ public class PlayerController : MonoBehaviour
         Debug.DrawRay(rayRight.position,Vector2.right * 0.15f, Color.red);
 
         //点击UI，不跳跃
-        if (EventSystem.current.IsPointerOverGameObject()) return;
+        if (IsPointerOverGameObject(Input.mousePosition)) return;
+
+        //区分平台
+        //if (Application.platform == RuntimePlatform.WindowsEditor ||
+        //    Application.platform == RuntimePlatform.WindowsPlayer)
+        //{
+        //    if (EventSystem.current.IsPointerOverGameObject()) return;
+        //}
+        //else
+        //{
+        //    int fingerId = Input.GetTouch(0).fingerId;
+        //    if (EventSystem.current.IsPointerOverGameObject(fingerId)) return;
+        //}
 
         if (GameManager.Instance.IsGameStarted == false || GameManager.Instance.IsGameOver || GameManager.Instance.IsPause)
             return;
@@ -65,6 +83,8 @@ public class PlayerController : MonoBehaviour
                 EventCenter.Broadcast(EventDefine.PlayerMove);
                 isMove = true;
             }
+
+            m_AudioSource.PlayOneShot(vars.jumpClip);
 
             EventCenter.Broadcast(EventDefine.DecidePath);
 
@@ -94,6 +114,8 @@ public class PlayerController : MonoBehaviour
         //第一种游戏结束方式，跳错了边
         if (my_Body.velocity.y < 0 && IsRayPlatform()==false && GameManager.Instance.IsGameOver == false)
         {
+            m_AudioSource.PlayOneShot(vars.fallClip);
+
             spriteRenderer.sortingLayerName = "Default";
             GetComponent<BoxCollider2D>().enabled = false;
             GameManager.Instance.IsGameOver = true;
@@ -105,6 +127,8 @@ public class PlayerController : MonoBehaviour
         //第二种游戏结束方式，碰到了障碍物
         if (isJumping && IsRayObstacle() && GameManager.Instance.IsGameOver == false)
         {
+            m_AudioSource.PlayOneShot(vars.hitClip);
+
             GameObject go = ObjectPool.Instance.GetDeathEffect();
             go.SetActive(true);
             go.transform.position = transform.position;
@@ -118,6 +142,8 @@ public class PlayerController : MonoBehaviour
         if (transform.position.y - Camera.main.transform.position.y < -6f
             && !GameManager.Instance.IsGameOver)
         {
+            m_AudioSource.PlayOneShot(vars.fallClip);
+
             GameManager.Instance.IsGameOver = true;
             //Todo 调用游戏结束面板
             Debug.LogError("【3】游戏结束，平台掉下");
@@ -230,8 +256,35 @@ public class PlayerController : MonoBehaviour
         //吃到钻石
         if (collision.collider.CompareTag("Pickup"))
         {
+            m_AudioSource.PlayOneShot(vars.diamondClip);
+
             EventCenter.Broadcast(EventDefine.AddDiamond);
             collision.gameObject.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// 音效是否开启
+    /// </summary>
+    /// <param name="isMusicOn"></param>
+    private void IsMusicOn(bool isMusicOn)
+    {
+        m_AudioSource.mute = !isMusicOn;
+    }
+
+    /// <summary>
+    //// 创建一个点击事件判断是否点击到UI
+    /// </summary>
+    /// <param name="mousePosition"></param>
+    /// <returns></returns>
+    private bool IsPointerOverGameObject(Vector2 mousePosition)
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = mousePosition;
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        //向点击位置发射射线
+        EventSystem.current.RaycastAll(eventData, raycastResults);
+
+        return raycastResults.Count > 0;
     }
 }

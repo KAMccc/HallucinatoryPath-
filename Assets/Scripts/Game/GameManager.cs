@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using System.IO;
-
+using System.Linq;
 public class GameManager : MonoBehaviour
 {
     //做成单例
@@ -60,6 +60,59 @@ public class GameManager : MonoBehaviour
         EventCenter.RemoveListener(EventDefine.PlayerMove, PlayerMove);
         EventCenter.RemoveListener(EventDefine.AddDiamond, AddGameDiaond);
 
+    }
+
+    /// <summary>
+    /// 保存排行榜成绩
+    /// </summary>
+    /// <param name="score"></param>
+    public void SaveScore(int score)
+    {
+       List<int> list = bestScoreArr.ToList();
+        //从大到小排序List
+        list.Sort((x, y) => (-x.CompareTo(y)));
+        bestScoreArr = list.ToArray();
+
+        int index = -1;
+
+        for (int i = 0; i < bestScoreArr.Length; i++)
+        {
+            if (score > bestScoreArr[i])
+            {
+                index = i;
+            }
+        }
+
+        if (index == -1) return;
+        for (int i = bestScoreArr.Length -1 ; i > index; i--)
+        {
+            bestScoreArr[i] = bestScoreArr[i - 1];
+        }
+        bestScoreArr[index] = score;
+        Save();
+
+    }
+
+    /// <summary>
+    /// 获取最高分
+    /// </summary>
+    public int GetBestScore()
+    {
+        return bestScoreArr.Max();
+    }
+
+    /// <summary>
+    /// 获得最高分数组=》排行榜
+    /// </summary>
+    /// <returns></returns>
+    public int[] GetScoreArr()
+    {
+        List<int> list = bestScoreArr.ToList();
+        //从大到小排序List
+        list.Sort((x, y) => (-x.CompareTo(y)));
+        bestScoreArr = list.ToArray();
+
+        return bestScoreArr;
     }
 
     /// <summary>
@@ -169,6 +222,26 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 设置音效是否开启
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetIsMusicOn(bool value)
+    {
+        isMusicOn = value;
+        Save();
+    }
+
+    /// <summary>
+    /// 获取音效是否开启
+    /// </summary>
+    /// <returns></returns>
+    public bool GetIsMusicOn()
+    {
+        return isMusicOn;
+    }
+
+
+    /// <summary>
     /// 初始化游戏数据
     /// </summary>
     private void InitGameData()
@@ -252,4 +325,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 重置数据
+    /// </summary>
+    public void ResetData()
+    {
+        isFirstGame = false;
+        isMusicOn = true;
+        bestScoreArr = new int[3];
+        selectSkin = 0;
+        skinUnlocked = new bool[vars.skinSpriteList.Count];
+        skinUnlocked[0] = true;//第一个皮肤默认解锁
+        diamondCount = 10;
+
+        Save();
+    }
 }

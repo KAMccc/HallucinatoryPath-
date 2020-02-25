@@ -12,4 +12,8 @@
     ShowMainPanel,
     ChangeSkin,
     Hint,
+    ShowResetPanel,
+    ShowRankPanel,
+    PlayClickAudio,
+    IsMusicOn,
 }

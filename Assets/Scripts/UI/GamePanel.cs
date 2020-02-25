@@ -73,6 +73,8 @@ public class GamePanel : MonoBehaviour
     /// </summary>
     private void OnPasueButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
+
         btn_Play.gameObject.SetActive(true);
         btn_Pause.gameObject.SetActive(false);
 
@@ -86,6 +88,8 @@ public class GamePanel : MonoBehaviour
     /// </summary>
     private void OnPlayButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
+
         btn_Play.gameObject.SetActive(false);
         btn_Pause.gameObject.SetActive(true);
 

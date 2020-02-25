@@ -126,6 +126,8 @@ public class ShopPanel : MonoBehaviour
     /// </summary>
     private void OnBackButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
+
         EventCenter.Broadcast(EventDefine.ShowMainPanel);
         gameObject.SetActive(false);
     }
@@ -135,6 +137,8 @@ public class ShopPanel : MonoBehaviour
     /// </summary>
     private void OnBuyButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
+
         int price =int.Parse(btn_Buy.GetComponentInChildren<Text>().text);
         if(price > GameManager.Instance.GetAllDiamond())
         {
@@ -150,6 +154,8 @@ public class ShopPanel : MonoBehaviour
     //选择按钮点击
     private void OnSelectButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
+
         EventCenter.Broadcast(EventDefine.ChangeSkin,selectIndex);
         GameManager.Instance.SetSelectedSkin(selectIndex);
         //设置皮肤后隐藏按钮

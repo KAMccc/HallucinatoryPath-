@@ -31,6 +31,7 @@ public class MainPanel : MonoBehaviour
         }
         //主界面设置当前皮肤图片
         ChangeSkin(GameManager.Instance.GetCurrentSelectSkin());
+        Sound();
     }
 
     private void OnDestroy()
@@ -63,6 +64,7 @@ public class MainPanel : MonoBehaviour
     /// </summary>
     private void OnStartButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
         GameManager.Instance.IsGameStarted = true;
         EventCenter.Broadcast(EventDefine.ShopGamePanel);
         gameObject.SetActive(false);
@@ -72,6 +74,8 @@ public class MainPanel : MonoBehaviour
     /// </summary>
     private void OnShopButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
+
         EventCenter.Broadcast(EventDefine.ShowShopPanel);
         gameObject.SetActive(false);
     }
@@ -81,7 +85,9 @@ public class MainPanel : MonoBehaviour
     /// </summary>
     private void OnRankButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
 
+        EventCenter.Broadcast(EventDefine.ShowRankPanel);
     }
 
     /// <summary>
@@ -89,6 +95,9 @@ public class MainPanel : MonoBehaviour
     /// </summary>
     private void OnSoundButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
+        GameManager.Instance.SetIsMusicOn(!GameManager.Instance.GetIsMusicOn());
+        Sound();
 
     }
 
@@ -97,7 +106,9 @@ public class MainPanel : MonoBehaviour
     /// </summary>
     private void OnResetButtonClick()
     {
+        EventCenter.Broadcast(EventDefine.PlayClickAudio);
 
+        EventCenter.Broadcast(EventDefine.ShowResetPanel);
     }
 
     private void ShowMainPanel()
@@ -113,5 +124,19 @@ public class MainPanel : MonoBehaviour
     {
         btn_Shop.transform.GetChild(0).GetComponent<Image>().sprite = vars.skinSpriteList[skinIndex];
 
+    }
+
+    private void Sound()
+    {
+        if (GameManager.Instance.GetIsMusicOn())
+        {
+            btn_Sound.transform.GetChild(0).GetComponent<Image>().sprite = vars.musicOn;
+        }
+        else
+        {
+            btn_Sound.transform.GetChild(0).GetComponent<Image>().sprite = vars.musicOff;
+        }
+
+        EventCenter.Broadcast(EventDefine.IsMusicOn, GameManager.Instance.GetIsMusicOn());
     }
 }
